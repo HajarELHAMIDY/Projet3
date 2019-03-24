@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Page Title</title>
+    <style>
+        .user.card{
+            margin : 10px;
+            width  : 18rem;
+       
+        }
+        .female{
+           color: palevioletred
+
+        }
+        .male{
+           color: blue;
+
+        }
+        .user img{
+            opacity: 0.9;
+            height: 18rem;
+      
+        }
+        .user:hover img{
+            opacity : 1;
+            transform: scale(1.04);
+            transition:200ms;
+        }
+        .modifieForm {
+            position: absolute;
+            top: 30%;
+            left: 30%;
+            width: 350px;
+            height: auto;
+            padding: 20px;
+            border-radius: 6px;
+            background-color: rgb(192, 184, 184);
+            z-index: 1000;
+            display: none;
+        }
+    </style>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Users List</h1>
+        <button class="btn btn-success shownv" onclick="changeEtat()">Table</button>
+        <div class="users">
+            <div class="row">
+                
+            </div>
+        </div>
+        <div class="Table" style="display: none;">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Image</th>
+                        <th scope="col">Nom complet</th>
+                        <th scope="col">sexe</th>
+                        <th scope="col">email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
+
+
+    </div>
+    <table>
+        <tr class="rowTable">
+            <td><img src=""></td>
+            <td><p class="name"></p></td>
+            <td><p class="gender"></p></td>
+            <td><p class="email"></p></td>
+        </tr>
+    </table>
+
+    <div id="gabaris" style="display:none">
+            <div class="col-md-4 user">
+                    <div class="card" >
+                            <img src="" class="card-img-top" alt="">
+                            <div class="card-body">
+                              <h5 class="card-title name" ></h5>
+                              <p class="card-text email"></p>
+                              <button class="btn btn-primary">Accéder</button>
+                            </div>
+                          </div>
+            </div>
+    </div>
+    <div class="modifieForm">
+        <form data-index="">
+            <div class="form-group row">
+                <label for="Firstname" class="col-sm-2 col-form-label">First name</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="Firstname" placeholder="First name">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="Lastname" class="col-sm-2 col-form-label">Last name</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="Lastname" placeholder="Last name">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="email" class="col-sm-2 col-form-label">Email</label>
+                <div class="col-sm-10">
+                    <input type="email" class="form-control" id="email" placeholder="Email">
+                </div>
+            </div>
+            <button type="reset" class="btn btn-success" onclick="sauvgarder()">sauvgarder</button>
+            <button type="reset" class="btn btn-success" onclick="Annuler()">Annuler</button>
+        </form>
+    </div>
+
+
+
+
+
+
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/popper.js/dist/umd/popper.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="users.js"></script>
+    <script >
+       function showGrid(){
+        var gabari=document.querySelector('#gabaris .user')
+        var dest=document.querySelector('.users .row')
+        users.forEach(function(user,index){
+            var copy =gabari.cloneNode(true)
+            copy.querySelector('.name').innerHTML='<b>'+user.name.last+' '+user.name.first
+            copy.querySelector('.email').innerText=user.email
+            copy.querySelector('img').setAttribute('src',user.picture.large)
+            copy.classList.add(user.gender)
+            copy.querySelector('button').setAttribute('onclick','update('+index+')')
+            dest.appendChild(copy)
+        })
+       }
+       function showTable() {
+            var table = document.querySelector('table .rowTable');
+            var dist = document.querySelector('.table tbody');
+            users.forEach(function(user, index) {
+                let row = table.cloneNode(true);
+                row.querySelector('img').setAttribute('src', user.picture.thumbnail);
+                row.querySelector('.name').innerHTML = '<b>' + user.name.last + '</b> ' + user.name.first;
+                row.querySelector('.gender').innerText = user.gender;
+                row.querySelector('.email').innerText = user.email;
+                row.classList.remove('rowTable');
+                dist.appendChild(row);
+            });
+        }
+    
+        function update(index){
+            document.querySelector('.modifieForm').style.display = 'block';
+            document.querySelector('.modifieForm form').setAttribute('data-index', index);
+        }
+
+        function sauvgarder(){
+            var firstname = document.querySelector('#Firstname').value;
+            var lastname = document.querySelector('#Lastname').value;
+            var email = document.querySelector('#email').value;
+            var index = document.querySelector('.modifieForm form').getAttribute('data-index');
+            if(firstname != '') users[index].name.first = firstname;
+            if(lastname != '') users[index].name.last = lastname;
+            if(email != '') users[index].email = email;
+            document.querySelector('.modifieForm').style.display = 'none';
+            document.querySelector('.users .row').innerHTML = '';
+            document.querySelector('.table tbody').innerHTML = '';
+            showGrid();
+            showTable();
+        }
+
+        function Annuler(){
+            document.querySelector('.modifieForm').style.display = 'none';
+        }
+
+
+        var gridShowed = false;
+        var tableShowed = false;
+
+       function changeEtat() {
+            var grid = document.querySelector(".users");
+            var table = document.querySelector(".Table");
+            if(grid.style.display == "block") {
+                grid.style.display = 'none';
+                table.style.display = 'block';
+                document.querySelector(".shownv").innerText = 'Grid';
+                if(tableShowed == false) {
+                    showTable();
+                    tableShowed = true;
+                }
+            }
+            else {
+                grid.style.display = 'block';
+                table.style.display = 'none';
+                document.querySelector(".shownv").innerText = 'Table';
+                if(gridShowed == false) {
+                    showGrid();
+                    gridShowed = true;
+                }
+            }
+        }
+
+    </script>
+
+</body>
+</html>
